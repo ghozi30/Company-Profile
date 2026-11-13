@@ -1,0 +1,120 @@
+/* ==========================================================================
+   STILVA — EVERYDAY APPAREL (EST. 2030)
+   Editorial Visual System, Architectural Grid & Micro-Interactions
+   ========================================================================== */
+
+:root {
+  --bg-paper: #FAF8F5;
+  --surface-light: #F4F1EA;
+  --border-light: rgba(20, 20, 19, 0.08);
+  --bg-dark: #141413;
+  --surface-dark: #1C1B1A;
+  --text-primary: #161615;
+  --text-muted: #6E6A63;
+  --accent-bronze: #B68A56;
+}
+
+/* Base & Architectural 80px Grid Overlay */
+html {
+  background-color: var(--bg-paper);
+  color: var(--text-primary);
+}
+
+.arch-grid-overlay {
+  background-size: 80px 80px;
+  background-image:
+    linear-gradient(to right, rgba(20, 20, 19, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 20, 19, 0.035) 1px, transparent 1px);
+}
+
+/* Preloader Radial Bronze Glow */
+.preloader-glow {
+  background: radial-gradient(circle, rgba(182, 138, 86, 0.22) 0%, rgba(20, 20, 19, 0) 70%);
+}
+
+/* Custom Magnetic Cursor */
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--accent-bronze);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+}
+
+.cursor-ring {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(182, 138, 86, 0.65);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.28s ease,
+              border-color 0.28s ease;
+}
+
+.cursor-ring.cursor-hover {
+  width: 54px;
+  height: 54px;
+  background-color: rgba(182, 138, 86, 0.12);
+  border-color: var(--accent-bronze);
+}
+
+/* Rotating Circular Stamp */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spinSlow 22s linear infinite;
+}
+
+/* Infinite Marquee Ticker */
+@keyframes marqueeScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 34s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Horizontal Runway Scrollbar Hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Active Lookbook Filter & Size Selector States */
+.lookbook-filter.active {
+  background-color: var(--text-primary);
+  color: #FFFFFF;
+  border-color: var(--text-primary);
+}
+
+.size-btn.active {
+  background-color: var(--text-primary);
+  color: #FFFFFF;
+  border-color: var(--text-primary);
+}
+
