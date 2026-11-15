@@ -149,17 +149,98 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 5. Mobile Navigation Toggle
+  // 5. Mobile Navigation Toggle & Precision Section Navigation
+  const navbar = document.getElementById('navbar');
   const mobileMenuBtn = document.getElementById('mobileMenuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+  const trackedSections = Array.from(document.querySelectorAll('main section[id]'));
+
   if (mobileMenuBtn && mobileMenu) {
     mobileMenuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
     });
-    document.querySelectorAll('.mobile-nav-link').forEach((link) => {
-      link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
-    });
   }
+
+  const setActiveNav = (sectionId) => {
+    const targetHash = `#${sectionId}`;
+    navLinks.forEach((link) => {
+      link.classList.toggle('active', link.getAttribute('href') === targetHash);
+    });
+    mobileNavLinks.forEach((link) => {
+      link.classList.toggle('active', link.getAttribute('href') === targetHash);
+    });
+  };
+
+  const scrollToSection = (targetId) => {
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+    }
+
+    if (targetId === '#' || targetId === '#top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    const section = document.querySelector(targetId);
+    if (!section) return;
+
+    // Frame the section's inner content cleanly 28px below the sticky navbar
+    const contentAnchor = section.querySelector('.max-w-7xl') || section;
+    const navHeight = navbar ? navbar.offsetHeight : 80;
+    const contentTop = contentAnchor.getBoundingClientRect().top + window.scrollY;
+    const targetScrollY = Math.max(0, contentTop - navHeight - 28);
+
+    // Ensure elements in the destination section reveal cleanly on jump
+    if (window.gsap) {
+      section.querySelectorAll('.gs-reveal').forEach((el) => {
+        gsap.to(el, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', overwrite: 'auto' });
+      });
+    }
+
+    setActiveNav(section.id);
+    window.scrollTo({ top: targetScrollY, behavior: 'smooth' });
+  };
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', (e) => {
+      const href = anchor.getAttribute('href');
+      if (!href) return;
+      if (href === '#') {
+        e.preventDefault();
+        scrollToSection('#top');
+        return;
+      }
+      if (document.querySelector(href)) {
+        e.preventDefault();
+        scrollToSection(href);
+        if (history.replaceState) {
+          history.replaceState(null, '', href);
+        }
+      }
+    });
+  });
+
+  // ScrollSpy for active section indicator
+  const updateActiveSectionOnScroll = () => {
+    const navHeight = navbar ? navbar.offsetHeight : 80;
+    const probeY = window.scrollY + navHeight + 120;
+    let currentId = '';
+
+    trackedSections.forEach((sec) => {
+      if (probeY >= sec.offsetTop) {
+        currentId = sec.id;
+      }
+    });
+
+    if (currentId) {
+      setActiveNav(currentId);
+    }
+  };
+
+  window.addEventListener('scroll', updateActiveSectionOnScroll, { passive: true });
+  updateActiveSectionOnScroll();
 
   // 6. GSAP ScrollTrigger Section Reveals & Metric Count-Up
   if (window.gsap && window.ScrollTrigger) {
@@ -238,15 +319,24 @@ document.addEventListener('DOMContentLoaded', () => {
     updateRunwayProgress();
   }
 
+  const getRunwayStep = () => {
+    if (!runwayTrack) return 360;
+    const visibleCard = Array.from(productCards).find((card) => card.style.display !== 'none');
+    if (!visibleCard) return 360;
+    const trackStyle = window.getComputedStyle(runwayTrack);
+    const gap = parseFloat(trackStyle.columnGap || trackStyle.gap || '20') || 20;
+    return visibleCard.getBoundingClientRect().width + gap;
+  };
+
   if (runwayPrev && runwayTrack) {
     runwayPrev.addEventListener('click', () => {
-      runwayTrack.scrollBy({ left: -370, behavior: 'smooth' });
+      runwayTrack.scrollBy({ left: -getRunwayStep(), behavior: 'smooth' });
     });
   }
 
   if (runwayNext && runwayTrack) {
     runwayNext.addEventListener('click', () => {
-      runwayTrack.scrollBy({ left: 370, behavior: 'smooth' });
+      runwayTrack.scrollBy({ left: getRunwayStep(), behavior: 'smooth' });
     });
   }
 

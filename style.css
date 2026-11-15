@@ -18,6 +18,28 @@
 html {
   background-color: var(--bg-paper);
   color: var(--text-primary);
+  scroll-padding-top: 52px;
+}
+
+/* Active Navigation Link State */
+.nav-link.active {
+  color: var(--accent-bronze);
+  position: relative;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1.5px;
+  background-color: var(--accent-bronze);
+}
+
+.mobile-nav-link.active {
+  color: var(--accent-bronze);
+  font-weight: 600;
 }
 
 .arch-grid-overlay {
